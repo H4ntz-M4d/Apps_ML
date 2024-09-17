@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='/assets/favicon/favicon.ico') }}"
+      type="image/x-icon"
+    />
+
+    <!-- Map CSS -->
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
+    />
+
+    <!-- Libs CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='/assets/css/libs.bundle.css') }}"
+    />
+
+    <!-- Theme CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='/assets/css/theme.bundle.css') }}"
+    />
+
+    <style>
+      .chart-pie {
+        padding: 0.5rem;
+      }
+    </style>
+
+    <!-- Title -->
+    <title>Model ML</title>
+  </head>
+  <body>
+    {% include 'navbar.html' %}
+    {% block content %}
+    {% endblock  %}
+
+    <script src="{{ url_for('static', filename='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js') }}"></script>
+
+    <!-- Vendor JS -->
+    <script src="{{ url_for('static', filename='/assets/js/vendor.bundle.js') }}"></script>
+
+    <!-- Theme JS -->
+    <script src="{{ url_for('static', filename='/assets/js/theme.bundle.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='/assets/js/chart.js') }}"></script>
+  </body>
+</html>

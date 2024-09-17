@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="mt-n11 pt-12 pb-8 pt-md-14 pb-md-11 bg-black bg-pattern-2">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10 text-center" data-aos="fade-up">
+        <!-- Heading -->
+        <div class="row mt-n7">
+          <div class="col-12 col-sm-6 col-lg-4 mt-7">
+            <!-- Card -->
+            <div class="card h-100 bg-dark rounded-3">
+              <div class="card-body p-5">
+                <!-- Heading -->
+                <h3 class="fw-bold text-white">Jumlah Dataset</h3>
+
+                <!-- Text -->
+                <div class="card-body">
+                  <!-- Letter -->
+                  <div class="lh-1 fw-bolder text-info" style="font-size: 80px">
+                    100
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4 mt-7">
+            <!-- Card -->
+            <div class="card h-100 bg-dark rounded-3">
+              <div class="card-body p-5">
+                <!-- Heading -->
+                <h3 class="fw-bold text-white">Chart</h3>
+
+                <!-- grafik -->
+                <div class="container">
+                  <canvas class="chart-pie"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4 mt-7">
+            <!-- Card -->
+            <div class="card h-100 bg-dark rounded-3">
+              <div class="card-body p-5">
+                <!-- Heading -->
+                <h3 class="fw-bold text-white">Akurasi Model</h3>
+
+                <div class="card-body ">
+                  <!-- Letter -->
+                  <div class="lh-1 fw-bolder text-info" style="font-size: 80px">
+                    90% 
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / .row -->
+      </div>
+    </div>
+    <!-- / .row -->
+  </div>
+  <!-- / .container -->
+</section>
+{% endblock  %}

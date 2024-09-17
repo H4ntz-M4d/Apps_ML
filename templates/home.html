@@ -1,0 +1,88 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+<section class="mt-n11 pt-12 pb-8 pt-md-14 pb-md-11 bg-black bg-pattern-2">
+  <div class="container-fluid">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-12 col-lg-10 text-center" data-aos="fade-up">
+        <!-- Heading -->
+        <div class="row mt-n7 justify-content-center align-items-center">
+          <div class="col-12 col-sm-6 col-lg-11 mt-1">
+            <!-- Card -->
+            <div class="card h-100 bg-dark rounded-3">
+              <div class="card-body p-5">
+                <!-- content -->
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">No</th>
+                      <th scope="col">Fitur</th>
+                      <th scope="col">Deskripsi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">1</th>
+                      <td>ID Mesin</td>
+                      <td>Nomor seri pada setiap mesin</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">2</th>
+                      <td>Usia Mesin (tahun)</td>
+                      <td>
+                        Berapa lama mesin telah digunakan sejak pembelian,
+                        diukur dalam tahun
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">3</th>
+                      <td>Jam Operasi</td>
+                      <td>Total waktu mesin beroperasi, diukur dalam jam</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">4</th>
+                      <td>Suhu Operasi (°C)</td>
+                      <td>
+                        Suhu pada saat mesin beroperasi, diukur dalam derajat
+                        Celcius
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">5</th>
+                      <td>Vibrasi (Hz)</td>
+                      <td>
+                        Tingkat getaran mesin saat beroperasi, diukur dalam
+                        Hertz
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">6</th>
+                      <td>Tingkat Kebisingan (dB)</td>
+                      <td>
+                        Tingkat kebisingan mesin saat beroperasi, diukur dalam
+                        desibel
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">7</th>
+                      <td>Kegagalan</td>
+                      <td>
+                        Indikator apakah mesin mengalami kegagalan operasi (Ya/
+                        Tidak)
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / .row -->
+      </div>
+    </div>
+    <!-- / .row -->
+  </div>
+  <!-- / .container -->
+</section>
+{% endblock %}
