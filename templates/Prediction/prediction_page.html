@@ -1,0 +1,140 @@
+{% extends 'base.html' %} {% block content %}
+
+<section class="mt-n11 pt-12 pb-8 pt-md-14 pb-md-11 bg-black bg-pattern-2">
+  <div class="container-fluid">
+    <div class="row justify-content-center align-items-center">
+      <div class="col-12 col-lg-10 text-center" data-aos="fade-up">
+        <!-- Heading -->
+        <h1 class="display-3 text-white mb-4">Machine Prediction</h1>
+        <div class="row mt-n7 justify-content-center align-items-center">
+          <div class="col-12 col-sm-10 col-lg-6 mt-7">
+            <!-- Card -->
+            <div class="card h-100 bg-dark rounded-3">
+              <div class="card-body p-5">
+                <!-- Form -->
+                <form id="predictionForm">
+                  <div class="mb-3">
+                    <label for="usia_mesin" class="form-label text-white"
+                      >Usia Mesin (tahun)</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control bg-light text-dark"
+                      id="usia_mesin"
+                      name="usia_mesin"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="jam_operasi" class="form-label text-white"
+                      >Jam Operasi</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control bg-light text-dark"
+                      id="jam_operasi"
+                      name="jam_operasi"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="suhu_operasi" class="form-label text-white"
+                      >Suhu Operasi (°C)</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control bg-light text-dark"
+                      id="suhu_operasi"
+                      name="suhu_operasi"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="vibrasi" class="form-label text-white"
+                      >Vibrasi (Hz)</label
+                    >
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control bg-light text-dark"
+                      id="vibrasi"
+                      name="vibrasi"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label
+                      for="tingkat_kebisingan"
+                      class="form-label text-white"
+                      >Tingkat Kebisingan (dB)</label
+                    >
+                    <input
+                      type="number"
+                      step="0.1"
+                      class="form-control bg-light text-dark"
+                      id="tingkat_kebisingan"
+                      name="tingkat_kebisingan"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary">
+                    Prediksi
+                  </button>
+                </form>                
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5 mt-7">
+            <div id="resultSection" class="mt-4" style="display: none"></div>
+              <h3 class="text-white">Prediction Result</h3>
+              <p id="predictionResult" class="text-white"></p>
+            </div>
+          </div>
+        </div>
+        <!-- / .row -->
+      </div>
+    </div>
+    <!-- / .row -->
+  </div>
+  <!-- / .container -->
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $("#predictionForm").submit(function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: "/predict",
+        type: "POST",
+        data: $(this).serialize(),
+        success: function (response) {
+          if (response.success) {
+            $("#predictionResult").text(
+              "Machine Failure Prediction: " + response.prediction
+            );
+            if (response.prediction === "YA") {
+              $("#predictionResult").append(
+                "<br>The machine is predicted to fail. Consider scheduling maintenance soon."
+              );
+            } else {
+              $("#predictionResult").append(
+                "<br>The machine is predicted to operate normally."
+              );
+            }
+            $("#resultSection").show();
+          } else {
+            alert("An error occurred: " + response.error);
+          }
+        },
+        error: function () {
+          alert("An error occurred while processing your request.");
+        },
+      });
+    });
+  });
+</script>
+
+{% endblock %}

@@ -3,7 +3,8 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split,cross_val_score
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-
+from sklearn.tree import DecisionTreeClassifier
+import pickle
 df = pd.read_csv('Mesin_Data.csv')
 
 column_to_transform = ['Jam Operasi']
@@ -31,9 +32,11 @@ y = df['Kegagalan'].map({'TIDAK': 0, 'YA': 1})
 
 # apply into train test data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=81, stratify=y)
+
+# knn model
 knn = KNeighborsClassifier()
 
-cv_scores = cross_val_score(knn, X, y, cv=5)
+cv_scores = cross_val_score(knn, X, y, cv=10)
 print(f"Cross-Validation Scores: {cv_scores}")
 print(f"Mean Cross-Validation Score: {np.mean(cv_scores)}")
 print(f"Standard Deviation of Cross-Validation Scores: {np.std(cv_scores)}")
@@ -41,9 +44,15 @@ print(f"Standard Deviation of Cross-Validation Scores: {np.std(cv_scores)}")
 knn.fit(X_train, y_train)
 y_pred = knn.predict(X_test)
 
-print(f"Cross-Validation Score: {best_cv_score}")
-print(f"Test Accuracy: {accuracy_score(y_test, y_pred)}")
-print("Confusion Matrix:")
-print(confusion_matrix(y_test, y_pred))
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
+accuracy = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+correct_predictions = cm[0][0] + cm[1][1]
+incorrect_predictions = cm[0][1] + cm[1][0]
+
+print(accuracy)
+
+with open('knn_model.pkl', 'wb') as model_file:
+    pickle.dump(knn, model_file)
+
+def load():
+  return accuracy, correct_predictions, incorrect_predictions
