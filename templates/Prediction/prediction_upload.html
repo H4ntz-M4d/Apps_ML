@@ -1,0 +1,115 @@
+{% extends 'base.html' %} {% block content %}
+
+<section class="pt-12 pb-8 pt-md-14 pb-md-11 bg-gradient-dark">
+  <div class="container">
+    <h1 class="text-center mb-5">Upload CSV/XLSX and Predict</h1>
+
+    <div class="card p-5 shadow-lg">
+      <form id="uploadForm" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="fileInput" class="form-label"
+            >Upload CSV or XLSX file</label
+          >
+          <input
+            class="form-control"
+            type="file"
+            id="fileInput"
+            name="file"
+            accept=".csv, .xlsx"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary w-100">
+          Upload and Predict
+        </button>
+      </form>
+    </div>
+
+    <div class="mt-5" id="resultsSection" style="display: none">
+      <h3>Prediction Results</h3>
+      <table class="table table-bordered" id="resultsTable">
+        <thead>
+          <tr>
+            <th>Row</th>
+            <th>Prediction</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="py-8 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Machine Age vs. Failure Rate</h5>
+            <div id="failureProbabilityPlot" style="height: 300px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Operating Hours vs. Failure Rate</h5>
+            <div id="featureImportancePlot" style="height: 300px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">Temperature vs. Failure Rate</h5>
+            <div id="confusionMatrixPlot" style="height: 300px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("#uploadForm").submit(function (e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+
+      $.ajax({
+        url: "/upload_predict",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          if (response.success) {
+            $("#resultsSection").show();
+            var results = response.predictions;
+            var tbody = $("#resultsTable tbody");
+            tbody.empty();
+
+            results.forEach(function (prediction, index) {
+              var row =
+                "<tr><td>" +
+                (index + 1) +
+                "</td><td>" +
+                prediction +
+                "</td></tr>";
+              tbody.append(row);
+            });
+          } else {
+            alert("Prediction failed: " + response.error);
+          }
+        },
+        error: function () {
+          alert("An error occurred while processing the file.");
+        },
+      });
+    });
+  });
+</script>
+
+{% endblock %}

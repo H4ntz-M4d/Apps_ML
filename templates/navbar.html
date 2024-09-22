@@ -1,11 +1,48 @@
-<nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container-fluid">
+<style>
+  .navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+  .navbar-brand-img {
+    height: 40px;
+  }
+  .navbar-nav .nav-link {
+    color: #333333 !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+  }
+  .navbar-nav .nav-link:hover,
+  .navbar-nav .nav-item.show .nav-link {
+    color: #007bff !important;
+  }
+  .navbar-nav .dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+  .navbar-nav .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }
+  .btn-dataset {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+    font-weight: 500;
+    padding: 0.375rem 1rem;
+  }
+  .btn-dataset:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+  }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="{{ url_for('home_page') }}">
       <img
         src="{{ url_for('static', filename='/assets/img/brand.svg') }}"
         class="navbar-brand-img"
-        alt="..."
+        alt="Brand logo"
       />
     </a>
 
@@ -24,51 +61,43 @@
 
     <!-- Collapse -->
     <div class="collapse navbar-collapse" id="navbarCollapse">
-      <!-- Toggler -->
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarCollapse"
-        aria-controls="navbarCollapse"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <i class="fe fe-x"></i>
-      </button>
-
       <!-- Navigation -->
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="{{ url_for('home_page') }}">
-            Home
-          </a>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('home_page') }}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('model_page') }}">Model</a>
         </li>
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
-            href="{{ url_for('model_page') }}"
-          >
-            Model
-          </a>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            id="navbarAccount"
-            data-bs-toggle="dropdown"
             href="#"
-            aria-haspopup="true"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
             aria-expanded="false"
           >
             Input Data
           </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li>
+              <a class="dropdown-item" href="{{ url_for('prediction_page') }}"
+                >Form Predict</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="{{ url_for('prediction_upload') }}"
+                >Upload File</a
+              >
+            </li>
+          </ul>
         </li>
       </ul>
 
       <!-- Button -->
       <a
-        class="navbar-btn btn btn-sm btn-info lift ms-auto"
+        class="btn btn-primary ms-3"
         href="https://themes.getbootstrap.com/product/landkit/"
         target="_blank"
       >
