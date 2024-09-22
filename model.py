@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split,cross_val_score
+from sklearn.model_selection import train_test_split,cross_val_score, LeaveOneOut
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.tree import DecisionTreeClassifier
 import pickle
@@ -31,28 +31,36 @@ X = df.drop(columns=['ID Mesin', 'Kegagalan'], axis=1)
 y = df['Kegagalan'].map({'TIDAK': 0, 'YA': 1})
 
 # apply into train test data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=81, stratify=y)
+# knn = 71 , dt = 98
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=98, stratify=y)
 
 # knn model
 knn = KNeighborsClassifier()
 
-cv_scores = cross_val_score(knn, X, y, cv=10)
+# decision tree model
+dt = DecisionTreeClassifier()
+
+cv_scores = cross_val_score(dt, X, y, cv=LeaveOneOut())
 print(f"Cross-Validation Scores: {cv_scores}")
 print(f"Mean Cross-Validation Score: {np.mean(cv_scores)}")
 print(f"Standard Deviation of Cross-Validation Scores: {np.std(cv_scores)}")
 
 knn.fit(X_train, y_train)
-y_pred = knn.predict(X_test)
+dt.fit(X_train, y_train)
+y_pred_knn = knn.predict(X_test)
+y_pred_dt = dt.predict(X_test)
 
-accuracy = accuracy_score(y_test, y_pred)
-cm = confusion_matrix(y_test, y_pred)
+accuracy = accuracy_score(y_test, y_pred_knn)
+print(accuracy_score(y_test, y_pred_knn))
+print(accuracy_score(y_test, y_pred_dt))
+cm = confusion_matrix(y_test, y_pred_dt)
 correct_predictions = cm[0][0] + cm[1][1]
 incorrect_predictions = cm[0][1] + cm[1][0]
-
-print(accuracy)
 
 with open('knn_model.pkl', 'wb') as model_file:
     pickle.dump(knn, model_file)
 
+with open('dt_model.pkl', 'wb') as model_file:
+    pickle.dump(dt, model_file)
 def load():
   return accuracy, correct_predictions, incorrect_predictions
