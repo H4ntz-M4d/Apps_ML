@@ -50,7 +50,7 @@ def predict():
             'Tingkat Kebisingan (dB)': [float(data['tingkat_kebisingan'])]
         })
         prediction = dt_model.predict(input_data)
-        result = "Normal" if prediction[0] == 1 else "Berpotensi Gagal"
+        result = "Ya" if prediction[0] == 1 else "Tidak"
 
         return jsonify({"prediction": result, "success": True})
     except Exception as e:
