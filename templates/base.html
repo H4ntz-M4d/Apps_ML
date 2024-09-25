@@ -29,6 +29,12 @@
       href="{{ url_for('static', filename='/assets/css/theme.bundle.css') }}"
     />
 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='charts/graph_chart.css') }}"
+    />
+
     <style>
       .chart-pie {
         padding: 0.5rem;
@@ -39,9 +45,7 @@
     <title>Model ML</title>
   </head>
   <body>
-    {% include 'navbar.html' %}
-    {% block content %}
-    {% endblock  %}
+    {% include 'navbar.html' %} {% block content %} {% endblock %}
 
     <script src="{{ url_for('static', filename='https://api.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js') }}"></script>
 
@@ -51,6 +55,7 @@
     <!-- Theme JS -->
     <script src="{{ url_for('static', filename='/assets/js/theme.bundle.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='charts/charts_home.js') }}"></script>
     <script src="{{ url_for('static', filename='/assets/js/chart.js') }}"></script>
   </body>
 </html>

@@ -1,63 +1,123 @@
 {% extends 'base.html' %} {% block content %}
-<section class="mt-n11 pt-12 pb-8 pt-md-14 pb-md-11 bg-white">
-  <div class="container-fluid">
-    <div class="row justify-content-center">
-      <div class="col-12 col-lg-10 text-center" data-aos="fade-up">
-        <!-- Heading -->
-        <div class="row mt-n7">
-          <div class="col-12 col-sm-6 col-lg-4 mt-7">
-            <!-- Card -->
-            <div class="card h-100 bg-white shadow-lg rounded-3">
-              <div class="card-body p-5">
-                <!-- Heading -->
-                <h3 class="fw-bold">Jumlah Dataset</h3>
-
-                <!-- Text -->
-                <div class="card-body">
-                  <!-- Letter -->
-                  <div class="lh-1 fw-bolder text-info" style="font-size: 80px">
-                    100
-                  </div>
-                </div>
-              </div>
-            </div>
+<section class="pt-12 pb-8 pt-md-14 pb-md-11 bg-gradient-dark">
+  <div class="row justify-content-center pb-8">
+    <div class="col-12 col-sm-6 col-md-4 mt-7" data-aos="fade-up">
+      <h1 class="text-center mb-5">Upload CSV</h1>
+      <div class="card p-5 shadow-lg">
+        <form
+          id="uploadForm"
+          method="POST"
+          action="/upload"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label for="fileInput" class="form-label">Upload CSV file</label>
+            <input
+              class="form-control"
+              type="file"
+              id="fileInput"
+              name="file"
+              accept=".csv"
+              required
+            />
           </div>
-          <div class="col-12 col-sm-6 col-lg-4 mt-7">
-            <!-- Card -->
-            <div class="card h-100 bg-white shadow-lg rounded-3">
-              <div class="card-body p-5">
-                <!-- Heading -->
-                <h3 class="fw-bold">Chart</h3>
+          <button type="submit" class="btn btn-primary w-100">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
-                <!-- grafik -->
-                <div class="container">
-                  <canvas class="chart-pie"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-4 mt-7">
-            <!-- Card -->
-            <div class="card h-100 bg-white shadow-lg rounded-3">
-              <div class="card-body p-5">
-                <!-- Heading -->
-                <h3 class="fw-bold">Akurasi Model</h3>
-
-                <div class="card-body">
-                  <!-- Letter -->
-                  <div class="lh-1 fw-bolder text-info" style="font-size: 80px">
-                    90%
-                  </div>
-                </div>
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10 text-center" data-aos="fade-up">
+      <div class="row mt-n7">
+        <!-- Dataset Count Card -->
+        <div class="col-12 col-sm-6 col-lg-4 mt-7">
+          <div class="card h-100 bg-white shadow-lg rounded-3">
+            <div
+              class="card-body p-5 d-flex flex-column justify-content-center align-items-center"
+            >
+              <h3 class="fw-bold text-center">Jumlah Dataset</h3>
+              <div
+                class="lh-1 fw-bolder text-primary text-center"
+                style="font-size: 80px"
+              >
+                {{ total_data }}
               </div>
             </div>
           </div>
         </div>
-        <!-- / .row -->
+
+        <!-- Failure Rate Card -->
+        <div class="col-12 col-sm-6 col-lg-4 mt-7">
+          <div class="card h-100 bg-white shadow-lg rounded-3">
+            <div class="card-body p-5">
+              <h3 class="fw-bold">Rate Kegagalan Mesin</h3>
+              <div class="container">
+                <canvas class="chart-pie"></canvas>
+                <div
+                  id="failure-rate"
+                  data-ya="{{ failure_rate['YA'] }}"
+                  data-tidak="{{ failure_rate['TIDAK'] }}"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Model Accuracy Card -->
+        <div class="col-12 col-sm-6 col-lg-4 mt-7">
+          <div class="card h-100 bg-white shadow-lg rounded-3">
+            <div class="card-body p-5">
+              <h3 class="fw-bold">Akurasi Model</h3>
+              <div class="lh-1 fw-bolder text-primary" style="font-size: 80px">
+                {{ best_accuracy }}%
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- / .row -->
   </div>
-  <!-- / .container -->
+
+  <!-- Classification Report Section -->
+  <div class="row justify-content-center mt-5" data-aos="fade-up">
+    <div class="col-12 col-sm-6 col-md-4">
+      <div class="card h-100 bg-white shadow-lg rounded-3">
+        <div class="card-body p-5">
+          <h3 class="fw-bold">Classification Report</h3>
+          <pre>{{ report }}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Random State Section -->
+  <div class="container-fluid mt-8">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8 text-center">
+        <span class="badge rounded-pill text-bg-primary-subtle mb-3">
+          <span class="h6 text-uppercase">Graphic</span>
+        </span>
+        <h1 class="text-white">Random State</h1>
+      </div>
+    </div>
+
+    <div class="container mt-5">
+      <section class="py-6 py-md-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="card_chart">
+          <h2 class="text-dark">Best Random State</h2>
+          <p>Iteration Comparison</p>
+          <div class="pulse"></div>
+          <div class="chart-area">
+            <div class="grid"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 </section>
+<script>
+  const randomStates = {{ random_states | safe }};
+  const accuracies = {{ accuracies | safe }};
+</script>
 {% endblock %}

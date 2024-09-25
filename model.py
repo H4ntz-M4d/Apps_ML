@@ -31,8 +31,8 @@ X = df.drop(columns=['ID Mesin', 'Kegagalan'], axis=1)
 y = df['Kegagalan'].map({'TIDAK': 0, 'YA': 1})
 
 # apply into train test data
-# knn = 71 , dt = 98
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=98, stratify=y)
+# knn = 81 , dt = 98
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=81, stratify=y)
 
 # knn model
 knn = KNeighborsClassifier()
