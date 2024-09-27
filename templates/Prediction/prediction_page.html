@@ -4,9 +4,11 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 text-center" data-aos="fade-up">
-        <h1 class="display-3 mb-5">
+        <h1 class="mb-5">
           Prediksi Mesin
-          <span class="badge bg-primary fs-3">Single data</span>
+          <span class="badge rounded-pill text-bg-success-subtle">
+            <span class="h6 text-uppercase">Single Data</span>
+          </span>
         </h1>
 
         <div class="row justify-content-center">
@@ -121,7 +123,7 @@
           if (response.success) {
             var resultText =
               "Prediksi kegagalan mesin : " + response.prediction;
-            if (response.prediction === "Berpotensi Gagal") {
+            if (response.prediction === "Ya") {
               resultText +=
                 "<br><span class='text-danger'>Mesin diprediksi gagal. Segera lakukan maintenance</span>";
             } else {

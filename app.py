@@ -2,11 +2,14 @@ import os
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import pickle
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from werkzeug.utils import secure_filename
+import pickle
 
 app = Flask(__name__)
 
@@ -31,7 +34,6 @@ def home_page():
 def model_page():
 
     df = pd.read_csv("Mesin_Data.csv")
-
     total_data = len(df)
 
     def outliers_mean(df, column_name):
@@ -94,8 +96,28 @@ def model_page():
     knn = KNeighborsClassifier(n_neighbors=5)
     knn.fit(X_train, y_train)
     y_pred = knn.predict(X_test)
+    report = classification_report(y_test, y_pred, output_dict=True)
+    cm = confusion_matrix(y_test, y_pred)
+    
+    plt.figure(figsize=(6, 4))
+    heatmap = sns.heatmap(cm, annot=True, cmap='Blues', fmt='g', cbar=False, 
+                          xticklabels=['TIDAK', 'YA'], yticklabels=['TIDAK', 'YA'])
 
-    report = classification_report(y_test, y_pred)
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    cm_heatmap_file = os.path.join('static', 'cm_heatmap.png')
+    plt.savefig(cm_heatmap_file)
+    plt.close()
+    
+    classification_data = {
+        "class_0": report['0'],
+        "class_1": report['1'],
+        "accuracy": report['accuracy'],
+        "macro_avg": report['macro avg'],
+        "weighted_avg": report['weighted avg'],
+    }
+    with open('knn_model.pkl', 'wb') as model_file:
+        pickle.dump(knn, model_file)
 
     return render_template(
         "model.html",
@@ -103,7 +125,8 @@ def model_page():
         random_states=random_states,
         failure_rate=failure_rate,
         accuracies=accuracies,
-        report=report,
+        cm_heatmap_file=cm_heatmap_file,
+        classification_data=classification_data,
         best_random_state=best_random_state,
         best_accuracy=best_accuracy_persen,
     )
@@ -121,11 +144,8 @@ def upload_file():
         file.save(filepath)
         
         df_uploaded = pd.read_csv(filepath)
-        
         df_existing = pd.read_csv("Mesin_Data.csv")
-        
         df_combined = pd.concat([df_existing, df_uploaded], ignore_index=True)
-        
         df_combined.to_csv("Mesin_Data.csv", index=False)
 
         return redirect(url_for('model_page'))
@@ -153,8 +173,11 @@ def predict():
             'Tingkat Kebisingan (dB)': [float(data['tingkat_kebisingan'])]
         })
         prediction = knn_model.predict(input_data)
-        result = "Ya" if prediction[0] == 1 else "Tidak"
-
+        result = ""
+        if(prediction == 1):
+            result = "Ya"
+        else:
+            result = "Tidak"
         return jsonify({"prediction": result, "success": True})
     except Exception as e:
         return jsonify({"error": str(e), "success": False}), 400
