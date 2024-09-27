@@ -2,7 +2,12 @@
 
 <section class="pt-12 pb-8 pt-md-14 pb-md-11 bg-gradient-dark">
   <div class="container">
-    <h1 class="text-center mb-5">Upload CSV/XLSX and Predict</h1>
+    <h1 class="text-center mb-5">
+      Upload CSV/XLSX and Predict
+      <span class="badge rounded-pill text-bg-success-subtle">
+        <span class="h6 text-uppercase">Multiple Data</span>
+      </span>
+    </h1>
 
     <div class="card p-5 shadow-lg">
       <form id="uploadForm" enctype="multipart/form-data">
@@ -24,56 +29,98 @@
         </button>
       </form>
     </div>
+  </div>
+</section>
 
-    <div class="mt-5" id="resultsSection" style="display: none">
-      <h3>Prediction Results</h3>
+<section
+  class="py-8 bg-light px-5 row"
+  id="resultsSection"
+  style="display: none"
+>
+  <div class="col-9 mb-4">
+    <div class="card shadow-sm p-5">
+      <h3>
+        <span
+          class="bg-primary rounded-circle d-inline-block me-2"
+          style="width: 10px; height: 10px"
+        ></span>
+        Hasil Prediksi
+      </h3>
       <table class="table table-bordered" id="resultsTable">
         <thead>
           <tr>
             <th>Row</th>
-            <th>Prediction</th>
+            <th>Prediksi</th>
           </tr>
         </thead>
         <tbody></tbody>
       </table>
     </div>
   </div>
-</section>
-
-<section class="py-8 bg-light">
-  <div class="container">
-    <div class="row">
-      <div class="col-12 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title">Machine Age vs. Failure Rate</h5>
-            <div id="failureProbabilityPlot" style="height: 300px"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title">Operating Hours vs. Failure Rate</h5>
-            <div id="featureImportancePlot" style="height: 300px"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title">Temperature vs. Failure Rate</h5>
-            <div id="confusionMatrixPlot" style="height: 300px"></div>
-          </div>
-        </div>
+  <div class="col-3 mb-4">
+    <div class="card shadow-sm h-fit">
+      <div class="card-body">
+        <h3>
+          <span
+            class="bg-primary rounded-circle d-inline-block me-2"
+            style="width: 10px; height: 10px"
+          ></span>
+          Rasio Hasil
+        </h3>
+        <canvas id="pieChart"></canvas>
       </div>
     </div>
   </div>
 </section>
 
+<div
+  class="modal fade"
+  id="errorModal"
+  tabindex="-1"
+  aria-labelledby="errorModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+      </div>
+      <div class="modal-body" id="errorModalBody"></div>
+    </div>
+  </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css"
+/>
+<script
+  type="text/javascript"
+  charset="utf8"
+  src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css"
+/>
+<script
+  type="text/javascript"
+  charset="utf8"
+  src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"
+></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
   $(document).ready(function () {
+    var dataTable;
+    var pieChart;
+
     $("#uploadForm").submit(function (e) {
       e.preventDefault();
       var formData = new FormData(this);
@@ -91,21 +138,111 @@
             var tbody = $("#resultsTable tbody");
             tbody.empty();
 
+            var yaCount = 0;
+            var tidakCount = 0;
+
             results.forEach(function (prediction, index) {
+              var status = prediction === 1 ? "Ya" : "Tidak";
               var row =
-                "<tr><td>" +
-                (index + 1) +
-                "</td><td>" +
-                prediction +
-                "</td></tr>";
+                "<tr><td>" + (index + 1) + "</td><td>" + status + "</td></tr>";
               tbody.append(row);
+
+              if (status === "Ya") {
+                yaCount++;
+              } else {
+                tidakCount++;
+              }
+            });
+
+            // Initialize or reinitialize DataTable
+            if ($.fn.DataTable.isDataTable("#resultsTable")) {
+              $("#resultsTable").DataTable().destroy();
+            }
+            dataTable = $("#resultsTable").DataTable({
+              pageLength: 10,
+              lengthMenu: [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"],
+              ],
+            });
+
+            // Calculate percentages
+            var total = yaCount + tidakCount;
+            var yaPercentage = ((yaCount / total) * 100).toFixed(1);
+            var tidakPercentage = ((tidakCount / total) * 100).toFixed(1);
+
+            // Create or update pie chart
+            if (pieChart) {
+              pieChart.destroy();
+            }
+            var ctx = document.getElementById("pieChart").getContext("2d");
+            pieChart = new Chart(ctx, {
+              type: "pie",
+              data: {
+                labels: [
+                  "Ya (" + yaPercentage + "%)",
+                  "Tidak (" + tidakPercentage + "%)",
+                ],
+                datasets: [
+                  {
+                    data: [yaCount, tidakCount],
+                    backgroundColor: ["#36A2EB", "#FF6384"],
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                title: {
+                  display: true,
+                  text: "Prediction Results",
+                },
+                tooltips: {
+                  callbacks: {
+                    label: function (tooltipItem, data) {
+                      var dataset = data.datasets[tooltipItem.datasetIndex];
+                      var total = dataset.data.reduce(function (
+                        previousValue,
+                        currentValue,
+                        currentIndex,
+                        array
+                      ) {
+                        return previousValue + currentValue;
+                      });
+                      var currentValue = dataset.data[tooltipItem.index];
+                      var percentage = Math.floor(
+                        (currentValue / total) * 100 + 0.5
+                      );
+                      return (
+                        data.labels[tooltipItem.index] +
+                        ": " +
+                        currentValue +
+                        " (" +
+                        percentage +
+                        "%)"
+                      );
+                    },
+                  },
+                },
+              },
             });
           } else {
-            alert("Prediction failed: " + response.error);
+            $("#errorModalBody").html(
+              "Gagal Memprediksi Data: " + response.error
+            );
+            $("#errorModal").modal("show");
+            setTimeout(function () {
+              $("#errorModal").modal("hide");
+            }, 2000);
           }
         },
         error: function () {
-          alert("An error occurred while processing the file.");
+          $("#errorModalBody").html(
+            "Terdapat kesalahan ketika memproses permintaan"
+          );
+          $("#errorModal").modal("show");
+          setTimeout(function () {
+            $("#errorModal").modal("hide");
+          }, 2000);
         },
       });
     });

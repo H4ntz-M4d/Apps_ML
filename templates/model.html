@@ -1,64 +1,196 @@
-{% extends 'base.html' %}
-{% block content %}
-<section class="mt-n11 pt-12 pb-8 pt-md-14 pb-md-11 bg-black bg-pattern-2">
-  <div class="container-fluid">
+{% extends 'base.html' %} {% block content %}
+<section class="pt-12 pb-8 pt-md-14 pb-md-11 bg-gradient-dark">
+  <div class="row justify-content-center pb-8">
+    <div class="col-8 col-sm-6" data-aos="fade-up">
+      <h1 class="text-center mb-5">Tambahkan Data</h1>
+      <div class="card p-5 shadow-lg">
+        <form
+          id="uploadForm"
+          method="POST"
+          action="/upload"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label for="fileInput" class="form-label">Upload CSV file</label>
+            <input
+              class="form-control"
+              type="file"
+              id="fileInput"
+              name="file"
+              accept=".csv"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10" data-aos="fade-up">
+      <div class="row">
+        <!-- Left Column (Jumlah Dataset, Akurasi Model, Classification Report) -->
+        <div class="col-12 col-lg-6 d-flex flex-column text-center">
+          <!-- Dataset Count Card -->
+          <div class="flex-fill d-flex">
+            <div class="card w-100 bg-white shadow-lg rounded-3">
+              <div class="card-body p-5">
+                <h3 class="fw-bold">Jumlah Dataset</h3>
+                <div
+                  class="lh-1 fw-bolder text-primary text-center"
+                  style="font-size: 80px"
+                >
+                  {{ total_data }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Accuracy Card -->
+          <div class="flex-fill d-flex mt-3">
+            <div class="card w-100 bg-white shadow-lg rounded-3">
+              <div
+                class="card-body p-5 d-flex flex-column justify-content-center align-items-center"
+              >
+                <h3 class="fw-bold text-center">Akurasi Model</h3>
+                <div
+                  class="lh-1 fw-bolder text-primary text-center"
+                  style="font-size: 80px"
+                >
+                  {{ best_accuracy }}%
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Classification Report Section -->
+          <div class="flex-fill d-flex mt-3">
+            <div class="card bg-white shadow-lg rounded-3 w-fit">
+              <div
+                class="card-body p-5 d-flex flex-column justify-content-center align-items-center"
+              >
+                <h3 class="fw-bold text-center">Classification Report</h3>
+                <table class="table table-bordered text-center">
+                  <thead>
+                    <tr>
+                      <th>Class</th>
+                      <th>Precision</th>
+                      <th>Recall</th>
+                      <th>F1-Score</th>
+                      <th>Support</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Class 0</td>
+                      <td>
+                        {{ classification_data.class_0.precision | round(3) }}
+                      </td>
+                      <td>
+                        {{ classification_data.class_0.recall | round(3) }}
+                      </td>
+                      <td>
+                        {{ classification_data.class_0['f1-score'] | round(3) }}
+                      </td>
+                      <td>{{ classification_data.class_0.support }}</td>
+                    </tr>
+                    <tr>
+                      <td>Class 1</td>
+                      <td>
+                        {{ classification_data.class_1.precision | round(3) }}
+                      </td>
+                      <td>
+                        {{ classification_data.class_1.recall | round(3) }}
+                      </td>
+                      <td>
+                        {{ classification_data.class_1['f1-score'] | round(3) }}
+                      </td>
+                      <td>{{ classification_data.class_1.support }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column (Pie Chart for Failure Rate) -->
+        <div class="col-12 col-lg-6 d-flex align-items-stretch">
+          <div class="card w-100 bg-white shadow-lg rounded-3">
+            <div
+              class="card-body p-5 d-flex flex-column justify-content-center align-items-center"
+            >
+              <h3 class="fw-bold text-center">Rate Kegagalan Mesin</h3>
+              <div class="container d-flex flex-column justify-content-center">
+                <canvas class="chart-pie"></canvas>
+                <div
+                  id="failure-rate"
+                  data-ya="{{ failure_rate['YA'] }}"
+                  data-tidak="{{ failure_rate['TIDAK'] }}"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Random State Section -->
+  <div class="container-fluid mt-4" data-aos="fade-up">
     <div class="row justify-content-center">
-      <div class="col-12 col-lg-10 text-center" data-aos="fade-up">
-        <!-- Heading -->
-        <div class="row mt-n7">
-          <div class="col-12 col-sm-6 col-lg-4 mt-7">
-            <!-- Card -->
-            <div class="card h-100 bg-dark rounded-3">
-              <div class="card-body p-5">
-                <!-- Heading -->
-                <h3 class="fw-bold text-white">Jumlah Dataset</h3>
+      <div class="col-10">
+        <div class="row justify-content-center">
+          <div class="col-12 col-md-10 col-lg-8 text-center mb-5">
+            <span class="badge rounded-pill text-bg-primary-subtle">
+              <span class="h6 text-uppercase">Graphic</span>
+            </span>
+          </div>
+        </div>
 
-                <!-- Text -->
-                <div class="card-body">
-                  <!-- Letter -->
-                  <div class="lh-1 fw-bolder text-info" style="font-size: 80px">
-                    100
-                  </div>
+        <div class="row justify-content-center align-items-stretch">
+          <!-- Confusion Matrix Column -->
+          <div class="col-md-6 mb-4">
+            <div class="card h-100 bg-white shadow-lg rounded-3">
+              <div
+                class="card-body p-5 d-flex flex-column justify-content-center"
+              >
+                <h3 class="fw-bold text-center mb-4">Confusion Matrix</h3>
+                <div class="text-center">
+                  <img
+                    src="{{ url_for('static', filename='cm_heatmap.png') }}"
+                    class="img-fluid"
+                    alt="Classification Metrics Heatmap"
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-12 col-sm-6 col-lg-4 mt-7">
-            <!-- Card -->
-            <div class="card h-100 bg-dark rounded-3">
-              <div class="card-body p-5">
-                <!-- Heading -->
-                <h3 class="fw-bold text-white">Chart</h3>
 
-                <!-- grafik -->
-                <div class="container">
-                  <canvas class="chart-pie"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-4 mt-7">
-            <!-- Card -->
-            <div class="card h-100 bg-dark rounded-3">
-              <div class="card-body p-5">
-                <!-- Heading -->
-                <h3 class="fw-bold text-white">Akurasi Model</h3>
-
-                <div class="card-body ">
-                  <!-- Letter -->
-                  <div class="lh-1 fw-bolder text-info" style="font-size: 80px">
-                    90% 
-                  </div>
+          <!-- Best Random State Column -->
+          <div class="col-md-6 mb-4">
+            <div class="card h-100 bg-white shadow-lg rounded-3">
+              <div
+                class="card-body p-5 d-flex flex-column justify-content-center"
+              >
+                <h3 class="fw-bold text-center mb-4">Best Random State</h3>
+                <p class="text-center">Iteration Comparison</p>
+                <div class="chart-area">
+                  <div class="grid"></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <!-- / .row -->
       </div>
     </div>
-    <!-- / .row -->
   </div>
-  <!-- / .container -->
 </section>
-{% endblock  %}
+
+<script>
+  // Handle best random state chart rendering
+  const randomStates = {{ random_states | safe }};
+  const accuracies = {{ accuracies | safe }};
+</script>
+{% endblock %}

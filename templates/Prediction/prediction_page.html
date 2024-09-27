@@ -4,9 +4,11 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 text-center" data-aos="fade-up">
-        <h1 class="display-3 mb-5">
+        <h1 class="mb-5">
           Prediksi Mesin
-          <span class="badge bg-primary fs-3">Single data</span>
+          <span class="badge rounded-pill text-bg-success-subtle">
+            <span class="h6 text-uppercase">Single Data</span>
+          </span>
         </h1>
 
         <div class="row justify-content-center">
@@ -103,36 +105,7 @@
   </div>
 </section>
 
-<section class="py-8 bg-light">
-  <div class="container">
-    <div class="row">
-      <div class="col-12 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title">Machine Age vs. Failure Rate</h5>
-            <div id="failureProbabilityPlot" style="height: 300px"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title">Operating Hours vs. Failure Rate</h5>
-            <div id="featureImportancePlot" style="height: 300px"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <h5 class="card-title">Temperature vs. Failure Rate</h5>
-            <div id="confusionMatrixPlot" style="height: 300px"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="py-8 bg-light"></section>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -150,7 +123,7 @@
           if (response.success) {
             var resultText =
               "Prediksi kegagalan mesin : " + response.prediction;
-            if (response.prediction === "Berpotensi Gagal") {
+            if (response.prediction === "Ya") {
               resultText +=
                 "<br><span class='text-danger'>Mesin diprediksi gagal. Segera lakukan maintenance</span>";
             } else {
